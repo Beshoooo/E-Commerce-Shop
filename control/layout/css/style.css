@@ -1,0 +1,67 @@
+/*start main rules*/
+body
+{
+    background-color: #f4f4f4;
+    font-size: 16px;
+}
+/*end main rules*/
+
+/*start general style*/
+span{color:red;}
+h5{color: red;text-align: center;}
+/*end general*/
+
+/*start Clear*/
+.clear{clear: both;}
+/*end clear*/
+
+/*start handle margin for h3 after navbar*/
+.marginForNav{margin: 60px 0px 0px 0px;}
+/*end*/
+
+/*start login form*/
+.login{margin: 100px auto;}
+.login h3{color: #888;}
+.login .form-control{background-color: #eaeaea;}
+.login input[type="submit"]{width: 300px;;}
+/*end login form*/
+
+/*strat navbar*/
+.navbar {padding-top: 0;padding-bottom: 0;}
+.navbar .nav-opt a {padding:16px 12px;}
+.dropdown-menu[data-bs-popper] 
+{
+    margin-top: 0;
+    margin-bottom: 10px;
+    right: 0;
+    left: auto;
+    border: none;
+    border-radius: 0;
+
+}
+.navbar-brand{font-size: 1em;}
+
+.navbar-dark .navbar-nav .nav-link:focus,
+link:focus, .navbar-dark .navbar-nav .nav-link:hover,
+.dropdown-menu
+{color: #fff;background-color: #560d13;}
+
+.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover
+{color: #000;background-color: #3498db;}
+
+.dropdown-menu{min-width: 200px;padding: 0;}
+.dropdown-menu > li > a{color: #fff;padding: 9px 16px;}
+.navbar-expand-lg .navbar-nav .nav-link{padding:16px 12px; }
+/*end navbar*/
+
+/*start edit profile page*/
+h3{margin: 96px 0px 40px 0px;color: #888;}
+.Edit-profile input[type="submit"]
+{margin-top: 30px;margin-bottom: 50px;}
+.Edit-profile label{white-space: nowrap;}
+
+.Change-pass > div{margin-bottom: 20px;}
+.Change-pass h3{margin-top: 30px;}
+/*end edit profile page*/
+
