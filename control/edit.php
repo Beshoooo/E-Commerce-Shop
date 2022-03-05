@@ -29,33 +29,33 @@
 <!--Type here html you need-->
                     <div class="Edit-profile container">
                         <h3 class="text-center">Edit Profile</h1>
-                        <form class="Edit-data" autocomplete="off" action="?do=update-data" method="POST">
+                        <form onsubmit="return EditProfile()" class="Edit-data" autocomplete="off" action="?do=update-data" method="POST">
                             <input type="hidden" name="userid" value="<?php echo $UserID;?>">
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Username</label>
                                 <div class="col-sm-12 col-md-12 col-lg-5">
-                                    <input class="form-control" type="text" name="username" value="<?php echo $row["Username"];?>" required>
-                                    <span class="message1"></span>
+                                    <input id ="username" class="form-control" type="text" name="username" value="<?php echo $row["Username"];?>" required>
+                                    <span id="message1"></span>
                                 </div>
                             
                                 <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Full Name</label>
                                 <div class="col-sm-12 col-md-12 col-lg-5">
-                                    <input class="form-control" type="text" name="fullname" value="<?php echo $row["Fullname"];?>" required>
-                                    <span class="message2"></span>
+                                    <input id ="fullname" class="form-control" type="text" name="fullname" value="<?php echo $row["Fullname"];?>" required>
+                                    <span id="message2"></span>
                                 </div>
                             </div>
 
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Password</label>
                                 <div class="col-sm-12 col-md-12 col-lg-5">
-                                    <input class="form-control" type="password" name="password" required>
-                                    <span class="message3"></span>
+                                    <input id ="pass" class="form-control" type="password" name="password" required>
+                                    <span id="message3"></span>
                                 </div>
 
                                 <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Email</label>
                                 <div class="col-sm-12 col-md-12 col-lg-5">
-                                    <input class="form-control" type="email" name="email" value="<?php echo $row["Email"];?>" required>
-                                    <span class="message4"></span>
+                                    <input id ="email" class="form-control" type="email" name="email" value="<?php echo $row["Email"];?>" required>
+                                    <span id="message4"></span>
                                 </div>
                             </div>
 
@@ -76,7 +76,7 @@
                                 <label class="col-form-label col-lg-2">Old Password</label>
                                 <div class="col-lg-5">
                                     <input id="old-pass" class="form-control" name="old" type="password" required>
-                                    <span id = "message1"></span>
+                                    <span id = "message1_2"></span>
                                 </div>
                             </div>
 
@@ -84,7 +84,7 @@
                                 <label class="col-form-label col-lg-2">New Password</label>
                                 <div class="col-lg-5">
                                     <input id="new-pass1" class="form-control" type="password" name="new" required>
-                                    <span id = "message2"></span>
+                                    <span id = "message2_2"></span>
 
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
                                 <label class="col-form-label col-lg-2">Confirm Password</label>
                                 <div class="col-lg-5">
                                     <input id="new-pass2" class="form-control" type="password" required>
-                                    <span id = "message3"></span>
+                                    <span id = "message3_2"></span>
 
                                 </div>
                             </div>
@@ -141,11 +141,11 @@
                 }
                 
                 //check length
-                if (strlen($Username)<6 || strlen($Username)>20 || strlen($Fullname)<10 || strlen($Fullname)>20) {
+                if (strlen($Username)<6 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20) {
                     if(strlen($Username)<6)
                     {$Errors_arr[]="Username can't be less than 6 letter.";}
                     elseif(strlen($Username)>20)
-                    {$Errors_arr[]="Username can't be more than 20 letter.";}
+                    {$Errors_arr[]="Username can't be more than 15 letter.";}
                     elseif(strlen($Fullname)<10)
                     {$Errors_arr[]="Fullname can't be less than 10 letter.";}
                     else
