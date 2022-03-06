@@ -40,7 +40,7 @@
                             
                                 <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Full Name</label>
                                 <div class="col-sm-12 col-md-12 col-lg-5">
-                                    <input id ="fullname" class="form-control" type="text" name="fullname" value="<?php echo $row["Fullname"];?>" required>
+                                    <input id ="fullname" class="form-control" type="text" name="fullname" value="<?php echo $row["Fullname"];?>"required> 
                                     <span id="message2"></span>
                                 </div>
                             </div>
@@ -117,6 +117,9 @@
         }//for validate
         elseif($do == "update-data")
         {
+            echo "<h3 class='text-center'>Update Data</h3>";
+            echo "<div class='container'>";
+
             //validation(Client side) all form "update-data"
             $Errors_arr=array();
             if ($_SERVER["REQUEST_METHOD"] == "POST") 
@@ -130,18 +133,18 @@
                 
                 //check Empty
                 if (empty($Username) || empty($Fullname) || empty($Email) || empty($Password)) 
-                {$Errors_arr[]="Please fill in all fields";}
+                {$Errors_arr[]="<div class='alert alert-danger'>Please fill in all fields</div>";}
                 
                 //check length
                 if (strlen($Username)<6 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20) {
                     if(strlen($Username)<6)
-                    {$Errors_arr[]="Username can't be less than 6 letter.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be less than 6 letter</div>.";}
                     elseif(strlen($Username)>20)
-                    {$Errors_arr[]="Username can't be more than 15 letter.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be more than 15 letter</div>.";}
                     elseif(strlen($Fullname)<10)
-                    {$Errors_arr[]="Fullname can't be less than 10 letter.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Fullname can't be less than 10 letter</div>.";}
                     else
-                    {$Errors_arr[]="Fullname can't be more than 20 letter.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Fullname can't be more than 20 letter</div>.";}
                 }
 
                 //if all is correct then update.
@@ -170,18 +173,21 @@
                 else
                 {
                     foreach ($Errors_arr as $error) {
-                        echo "<h3 class='text-center'>". $error . " </h3>";
+                        echo $error;
                     }
                 }
                 
                 
-                
-                
             }
             else{echo "sorry you can't access this page directly :D.";}
+            
+            echo "</div>";
         }
         elseif($do=="update-pass")
         {
+            echo "<h3 class='text-center'>Update Password</h3>";
+            echo "<div class='container'>";
+
             if($_SERVER["REQUEST_METHOD"]=="POST")
             {
                 
@@ -196,15 +202,15 @@
                 
                 //check Empty
                 if(empty($oldPass) || empty($newPass))
-                {$Errors_arr[]="Please fill in all fields";}
+                {$Errors_arr[]="<div class='alert alert-danger'>Please fill in all fields</div>";}
 
                 //check length
                 if(strlen($oldPass) < 8 || strlen($oldPass) >15 || strlen($newPass) < 8 ||strlen($newPass) > 15)
                 {
                     if(strlen($oldPass) < 8 || strlen($newPass) < 8)
-                    {$Errors_arr[]="Password can't be less than 8 character or digits.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Password can't be less than <strong>8 character or digits</strong>.</div>";}
                     elseif(strlen($oldPass) >15 || strlen($newPass) > 15)
-                    {$Errors_arr[]="Password can't be more than 15 character or digits.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Password can't be more than <strong>15 character or digits</strong>.</div>";}
                     
                 }
                 
@@ -231,10 +237,11 @@
                 //if ther's an error then print it.
                 else{
                     foreach ($Errors_arr as $error) {
-                        echo "<h3 class='text-center'>". $error . " </h3>";
+                        echo $error ;
                     }
                 }
             }
+            echo "</div>";
         }
 
         else

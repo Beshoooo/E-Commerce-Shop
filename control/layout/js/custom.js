@@ -14,6 +14,7 @@ $(function(){
 
 });
 
+
 //validation(Client side) for not submit till all is ok.
 //Validate  Edit_Profile Form
 function EditProfile()
