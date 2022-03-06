@@ -9,6 +9,7 @@ body
 /*start general style*/
 span{color:red;}
 h5{color: red;text-align: center;}
+h3{color: #888;}
 /*end general*/
 
 /*start Clear*/
@@ -21,7 +22,6 @@ h5{color: red;text-align: center;}
 
 /*start login form*/
 .login{margin: 100px auto;}
-.login h3{color: #888;}
 .login .form-control{background-color: #eaeaea;}
 .login input[type="submit"]{width: 300px;;}
 /*end login form*/
@@ -56,7 +56,7 @@ link:focus, .navbar-dark .navbar-nav .nav-link:hover,
 /*end navbar*/
 
 /*start edit profile page*/
-h3{margin: 96px 0px 40px 0px;color: #888;}
+.Edit-profile h3{margin: 96px 0px 40px 0px;}
 .Edit-profile input[type="submit"]
 {margin-top: 30px;margin-bottom: 50px;}
 .Edit-profile label{white-space: nowrap;}

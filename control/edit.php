@@ -117,7 +117,7 @@
         }//for validate
         elseif($do == "update-data")
         {
-            //Validate by serverSide all form "update-data"
+            //validation(Client side) all form "update-data"
             $Errors_arr=array();
             if ($_SERVER["REQUEST_METHOD"] == "POST") 
             {
@@ -129,16 +129,8 @@
                 $Password =$_POST["password"];
                 
                 //check Empty
-                if (empty($Username) || empty($Fullname) || empty($Email) || empty($Password)) {
-                    if(empty($Username))
-                    {$Errors_arr[]="Username can't be Empty.";}
-                    elseif(empty($Fullname))
-                    {$Errors_arr[]="Fullname can't be Empty.";}
-                    elseif(empty($Email))
-                    {$Errors_arr[]="Email can't be Empty.";}
-                    else
-                    {$Errors_arr[]="Password can't be Empty.";}
-                }
+                if (empty($Username) || empty($Fullname) || empty($Email) || empty($Password)) 
+                {$Errors_arr[]="Please fill in all fields";}
                 
                 //check length
                 if (strlen($Username)<6 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20) {
@@ -178,7 +170,7 @@
                 else
                 {
                     foreach ($Errors_arr as $error) {
-                        echo "<h3 class='text-center'>". $error . " </h3><br>";
+                        echo "<h3 class='text-center'>". $error . " </h3>";
                     }
                 }
                 
@@ -192,26 +184,55 @@
         {
             if($_SERVER["REQUEST_METHOD"]=="POST")
             {
+                
                 $oldPass  =$_POST["old"];
                 $hash_old =sha1($oldPass);
                 $newPass  =$_POST["new"];
                 $hash_new =sha1($newPass);
                 $ID       =$_POST["UserID"];
 
-                $stmt1=$con->prepare("select Password from users where ID = ? LIMIT 1");
-                $stmt1->execute(array($ID));
-                $row=$stmt1->fetch();
+                //validation(Client side) all form "update-pass"
+                $Errors_arr=array();
+                
+                //check Empty
+                if(empty($oldPass) || empty($newPass))
+                {$Errors_arr[]="Please fill in all fields";}
 
-                if($row["Password"]== $hash_old)
+                //check length
+                if(strlen($oldPass) < 8 || strlen($oldPass) >15 || strlen($newPass) < 8 ||strlen($newPass) > 15)
                 {
-                    $stmt2=$con->prepare("update users set Password = ? where ID = ? ");
-                    $stmt2->execute(array($hash_new,$ID));
-                    echo "<h3 class='text-center'>Your Password Updated Successfully </h3>";
+                    if(strlen($oldPass) < 8 || strlen($newPass) < 8)
+                    {$Errors_arr[]="Password can't be less than 8 character or digits.";}
+                    elseif(strlen($oldPass) >15 || strlen($newPass) > 15)
+                    {$Errors_arr[]="Password can't be more than 15 character or digits.";}
                     
                 }
-                else
+                
+                //if all is correct then update.
+                if (empty($Errors_arr))
                 {
-                    echo "<h3 class='text-center'> Wrong password plesae renter the right password.</h3>";
+                    $stmt1=$con->prepare("select Password from users where ID = ? LIMIT 1");
+                    $stmt1->execute(array($ID));
+                    $row=$stmt1->fetch();
+
+                    if($row["Password"]== $hash_old)
+                    {
+                        $stmt2=$con->prepare("update users set Password = ? where ID = ? ");
+                        $stmt2->execute(array($hash_new,$ID));
+                        echo "<h3 class='text-center'>Your Password Updated Successfully </h3>";
+                        
+                    }
+                    else
+                    {
+                        echo "<h3 class='text-center'> Wrong password plesae renter the right password.</h3>";
+                    }
+                }
+                
+                //if ther's an error then print it.
+                else{
+                    foreach ($Errors_arr as $error) {
+                        echo "<h3 class='text-center'>". $error . " </h3>";
+                    }
                 }
             }
         }

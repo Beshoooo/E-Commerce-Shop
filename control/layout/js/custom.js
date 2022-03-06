@@ -1,6 +1,7 @@
+//jquary function to hide and show placeholder
 $(function(){
 
-//Hide and Show place holder 
+//Hide and Show placeholder 
     $("input").on('focus',function () {
         $place = $(this).attr("placeholder");
         $(this).attr("placeholder","");
@@ -13,7 +14,7 @@ $(function(){
 
 });
 
-//validation for not submit till all is ok.
+//validation(Client side) for not submit till all is ok.
 //Validate  Edit_Profile Form
 function EditProfile()
 {
@@ -84,7 +85,7 @@ function EditProfile()
 }
 
 
-//validation for not submit till all is ok.
+//validation(Client side) for not submit till all is ok.
 //validate the form of update password 
 function verifyPassword() 
 {    
