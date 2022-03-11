@@ -8,10 +8,140 @@
     if(isset($_SESSION["Username"]))
     {
         include "init.php";
-        $do = $_GET["do"];
 
-        //check that we are comming from edit button else go to manage page. 
-        if(isset($_GET["do"]) && $_GET["do"]=="Edit") 
+        //if there is do ok get it else put it manage
+        $do = isset($_GET["do"]) ? $_GET["do"] : "manage";        
+
+        //check that we are comming from edit button else go to manage page.
+        if($do == "manage")
+        {
+            //Here i'm in manage and have more than option. 
+            echo "welcome in Manage page and do = " .$do."<br>";
+            echo "<a href='edit.php?do=Add'>add new member</a>";
+        }
+        elseif($do=="Add")
+        {
+        ?>
+        <div class="Edit-profile container">
+            <h3 class="text-center">Add New Member</h3>
+            <form onsubmit="return AddNewMember()" class="Edit-data" autocomplete="off" action="?do=Insert" method="POST">
+                <div class="form-group row mb-3 justify-content-lg-center">
+                    <label class="control-label addAstrisk col-sm-4 col-md-3 col-lg-2 col-form-label">Username</label>
+                    <div class="col-sm-7 col-md-8 col-lg-6 ">
+                        <input id ="username" class="form-control" type="text" name="username" placeholder="Type your Username" required>
+                        <span id="message1_3"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3 justify-content-lg-center">
+                    <label class="control-label addAstrisk col-sm-4 col-md-3 col-lg-2 col-form-label">Full Name</label>
+                    <div class="col-sm-7 col-md-8 col-lg-6">
+                        <input id ="fullname" class="form-control" type="text" name="fullname" placeholder="Type your Full name" required> 
+                        <span id="message2_3"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3 justify-content-lg-center">
+                    <label class="control-label addAstrisk col-sm-4 col-md-3 col-lg-2 col-form-label">Email</label>
+                    <div class="col-sm-7 col-md-8 col-lg-6">
+                        <input id ="email" class="form-control" type="email" name="email" placeholder="Type your Email" required>
+                        <span id="message3_3"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3 justify-content-lg-center">
+                    <label class="control-label addAstrisk col-sm-4 col-md-3 col-lg-2 col-form-label">Password</label>
+                    <div class="col-sm-7 col-md-8 col-lg-6">
+                        <input id ="pass" class="form-control" type="password" name="password" placeholder="Password must be complex " required>
+                        <span id="message4_3"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3 justify-content-lg-center">
+                    <label class="control-label addAstrisk col-sm-4 col-md-3 col-lg-2 col-form-label">Confirm Password</label>
+                    <div class="col-sm-7 col-md-8 col-lg-6">
+                        <input id ="confirmPass" class="form-control" type="password" placeholder="Confirm your password" required>
+                        <span id="message5_3"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3 justify-content-lg-center">
+                    <div class="col-sm-12">
+                        <input class="btn btn-primary col-sm-2 col-md-2 col-lg-2 offset-sm-4 offset-md-3 offset-lg-4" type="submit" value="Add Member">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+            
+        <?php
+        }
+        //comming from Add form
+        elseif ($do=="Insert") 
+        {
+            echo "<h3 class='text-center'>Update Data</h3>";
+            echo "<div class='container'>";
+            
+            $Errors_arr=array();
+            if($_SERVER["REQUEST_METHOD"]=="POST")
+            {
+                $Username= $_POST["username"];
+                $Fullname= $_POST["fullname"];
+                $Email= $_POST["email"];
+                $Password= $_POST["password"];
+                $hashed_pass=sha1($Password);
+
+                //check Empty
+                if (empty($Username) || empty($Fullname) || empty($Email) || empty($Password)) 
+                {$Errors_arr[]="<div class='alert alert-danger'>Please fill in all fields</div>";}
+                
+                //check length
+                if (strlen($Username)<6 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20
+                    || strlen($Password)<8) {
+                    
+                    if(strlen($Username)<6)
+                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be less than 6 letter</div>.";}
+                    elseif(strlen($Username)>20)
+                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be more than 15 letter</div>.";}
+                    elseif(strlen($Fullname)<10)
+                    {$Errors_arr[]="<div class='alert alert-danger'>Fullname can't be less than 10 letter</div>.";}
+                    elseif(strlen($Password)<8)
+                    {$Errors_arr[]="<div class='alert alert-danger'>Password can't be less than 8 letter and character</div>.";}
+                    else
+                    {$Errors_arr[]="<div class='alert alert-danger'>Fullname can't be more than 20 letter</div>.";}
+                }
+                
+                //ther's no errors
+                if(empty($Errors_arr))
+                {  
+                    $stmt=$con->prepare("insert into users(Username ,Password ,Email ,Fullname)
+                                            values(:zuser ,:zpass ,:zemail ,:zfullname) ");
+                                            //can also use question mark like "values(?,?,?,?)"
+                    
+                    $stmt->execute(array(   'zuser'=>$Username,
+                                            'zpass'=>$hashed_pass,
+                                            'zemail'=>$Email,
+                                            'zfullname'=>$Fullname));
+
+                    echo "<div class='alert alert-success'>".$stmt->rowCount()." Record Inserted .</div>";
+                }
+                //if ther's an error then print it.
+                else
+                {
+                    foreach ($Errors_arr as $error) {
+                        echo $error;
+                    }
+                }
+                
+                
+            }
+            else{echo "sorry you can't access this page directly :D.";}
+            
+            echo "</div>";
+
+        }
+
+        elseif($do=="Edit")
         {
             //check ther's ID and the ID is numeric and equal the ID in session
             if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"]) && $_SESSION["UserID"]==$_GET["UserID"]) {
@@ -25,10 +155,10 @@
                 if($count > 0)
                 {
 
-                    ?>
-<!--Type here html you need-->
+                ?>
+                    <!--Type here html you need-->
                     <div class="Edit-profile container">
-                        <h3 class="text-center">Edit Profile</h1>
+                        <h3 class="text-center">Edit Profile</h3>
                         <form onsubmit="return EditProfile()" class="Edit-data" autocomplete="off" action="?do=update-data" method="POST">
                             <input type="hidden" name="userid" value="<?php echo $UserID;?>">
                             <div class="form-group row mb-3">
@@ -114,8 +244,10 @@
                 else{echo "there's no data for this ID member in our database.";}
             }//for validate
             else{echo "there's no ID like this.";}
-        }//for validate
-        elseif($do == "update-data")
+        }
+
+        //comming from Edit form
+        elseif($do=="update-data")
         {
             echo "<h3 class='text-center'>Update Data</h3>";
             echo "<div class='container'>";
@@ -183,6 +315,8 @@
             
             echo "</div>";
         }
+
+        //comming from Edit Password form
         elseif($do=="update-pass")
         {
             echo "<h3 class='text-center'>Update Password</h3>";
@@ -205,13 +339,9 @@
                 {$Errors_arr[]="<div class='alert alert-danger'>Please fill in all fields</div>";}
 
                 //check length
-                if(strlen($oldPass) < 8 || strlen($oldPass) >15 || strlen($newPass) < 8 ||strlen($newPass) > 15)
+                if(strlen($oldPass) < 8  || strlen($newPass) < 8 )
                 {
-                    if(strlen($oldPass) < 8 || strlen($newPass) < 8)
                     {$Errors_arr[]="<div class='alert alert-danger'>Password can't be less than <strong>8 character or digits</strong>.</div>";}
-                    elseif(strlen($oldPass) >15 || strlen($newPass) > 15)
-                    {$Errors_arr[]="<div class='alert alert-danger'>Password can't be more than <strong>15 character or digits</strong>.</div>";}
-                    
                 }
                 
                 //if all is correct then update.
@@ -244,11 +374,11 @@
             echo "</div>";
         }
 
+        
+
         else
         {
-            echo $do ."mooo";
-            $do = "Manage";
-            echo "welcome in Manage page";
+            echo "There is no page here.";
         }
 
         include $tpl ."footer.php";
