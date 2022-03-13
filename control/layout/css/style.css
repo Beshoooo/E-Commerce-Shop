@@ -9,7 +9,7 @@ body
 /*start general style*/
 span{color:red;}
 h5{color: red;text-align: center;}
-h3{color: #888;margin: 90px 0px 40px 0px;}
+h3{color: #333333bf;margin: 90px 0px 40px 0px;}
 /*Adding astrisk*/
 .addAstrisk:after {
     content:"*";
@@ -72,3 +72,13 @@ link:focus, .navbar-dark .navbar-nav .nav-link:hover,
 .Change-pass h3{margin-top: 30px;}
 /*end edit profile page*/
 
+/*start edit manage page*/
+.main-table thead
+{
+    border-color: #333;
+    background-color: #333;
+    color: #fff;
+}
+.main-table a {margin-right: 5px;}
+
+/*end edit manage page*/

@@ -31,7 +31,7 @@ function EditProfile()
         emailVal = document.getElementById("email").value;
 
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        usernameformat = /^(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+        usernameformat = /^(?=[a-zA-Z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
 
     //validate Email by regex "Regular expression"
     if(email.value.match(mailformat))
@@ -68,7 +68,7 @@ function EditProfile()
             document.getElementById("message2").innerHTML = ""; 
         }
 
-        if(passVal.length < 8)
+        if(passVal.length > 0 && passVal.length < 8 )
         {
             pass.style.border="2px solid #f00";
             document.getElementById("message3").innerHTML = "**Password must be atleast 8 Character.";  
@@ -170,7 +170,7 @@ function AddNewMember()
         emailVal = document.getElementById("email").value;
 
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        usernameformat = /^(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+        usernameformat = /^(?=[a-zA-Z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
 
     //validate Email by regex "Regular expression"
     if(email.value.match(mailformat))

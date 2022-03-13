@@ -15,10 +15,124 @@
         //check that we are comming from edit button else go to manage page.
         if($do == "manage")
         {
-            //Here i'm in manage and have more than option. 
-            echo "welcome in Manage page and do = " .$do."<br>";
-            echo "<a href='edit.php?do=Add'>add new member</a>";
+        //Here i'm in manage page and have more than option. 
+            //now i will get all users data from database except admins.
+            $stmt =$con->prepare("select * from users where GroupID != 1");
+            $stmt->execute();
+            $rows =$stmt->fetchAll();
+
+            ?>
+
+            <h3 class="text-center">Manage Members</h3>
+            <div class="container">
+                <div class="table-responsive">
+                    <table class="main-table text-center table table-bordered">
+                        <thead>
+                            <td>#ID</td>
+                            <td>Username</td>
+                            <td>Fullname</td>
+                            <td>Email</td>
+                            <td>Registerd Date</td>
+                            <td>Control</td>
+                        </thead>
+                        
+                        <?php
+                            //catch user by user and put it in table
+                            foreach ($rows as $row)
+                            {
+                                echo "<tr>";
+                                    echo"<td>".$row["ID"]."</td>";
+                                    echo"<td>".$row["Username"]."</td>";
+                                    echo"<td>".$row["Fullname"]."</td>";
+                                    echo"<td>".$row["Email"]."</td>";
+                                    echo"<td>".$row["ID"]."</td>";
+                                    echo"<td>";
+                                        echo"<a class='btn btn-success' href='edit.php?do=Edit-data&UserID=".$row["ID"]."'>Edit</a>";
+                                        echo"<a class='btn btn-danger'>Delete</a>";
+                                    echo"</td>";
+                                echo "</tr>";
+                            }
+                        ?>
+                        
+                        
+                        
+                    </table>
+
+                    <a class="btn btn-primary" href='edit.php?do=Add'><i class="fa fa-plus"></i> add new member</a>
+                </div>
+            </div>
+            
+            <?php
         }
+
+        //Edit data for any member
+        elseif($do=="Edit-data")
+        {
+            //check ther's ID and the ID is numeric and equal the ID in session
+            if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"])) 
+            {
+                
+                $UserID=$_GET["UserID"];
+                //get all data of the user by ID
+                $stmt = $con->prepare("select * from users where ID = ? LIMIT 1");
+                $stmt->execute(array($UserID));
+                $row = $stmt->fetch();
+                $count = $stmt->rowCount(); 
+                if($count > 0)
+                {
+
+                ?>
+                    <!--Type here html you need-->
+                    <div class="Edit-profile container">
+                        <h3 class="text-center">Edit Profile</h3>
+                        <form onsubmit="return EditProfile()" class="Edit-data" autocomplete="off" action="?do=update-data" method="POST">
+                            <input type="hidden" name="userid" value="<?php echo $UserID;?>">
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Username</label>
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input id ="username" class="form-control" type="text" name="username" value="<?php echo $row["Username"];?>" required>
+                                    <span id="message1"></span>
+                                </div>
+                            
+                                <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Full Name</label>
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input id ="fullname" class="form-control" type="text" name="fullname" value="<?php echo $row["Fullname"];?>"required> 
+                                    <span id="message2"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Password</label>
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input id ="pass" class="form-control" type="password" name="password" placeholder="Leave Blank If You Didn't Want To Change">
+                                    <span id="message3"></span>
+                                </div>
+
+                                <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Email</label>
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input id ="email" class="form-control" type="email" name="email" value="<?php echo $row["Email"];?>" required>
+                                    <span id="message4"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-3 justify-content-lg-center">
+                                <div class="col-sm-12">
+                                    <input class="btn btn-primary col-sm-2 col-md-2 col-lg-2 offset-lg-5" type="submit" value="Save">
+                                </div>
+                            </div>
+                        </form>
+
+                        
+                    </div>
+                <?php
+                
+                }//for validate 
+                else{echo "there's no data for this ID member in our database.";}
+            }//for validate
+            else{echo "there's no ID like this.";}
+        }
+
+        //Add member page
         elseif($do=="Add")
         {
         ?>
@@ -141,10 +255,11 @@
 
         }
 
+        //Edit User profile
         elseif($do=="Edit")
         {
             //check ther's ID and the ID is numeric and equal the ID in session
-            if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"]) && $_SESSION["UserID"]==$_GET["UserID"]) {
+            if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"])) {
                 
                 $UserID=$_GET["UserID"];
                 //get all data of the user by ID
@@ -178,7 +293,7 @@
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3 col-md-3 col-lg-1 col-form-label">Password</label>
                                 <div class="col-sm-12 col-md-12 col-lg-5">
-                                    <input id ="pass" class="form-control" type="password" name="password" required>
+                                    <input id ="pass" class="form-control" type="password" name="password" placeholder="Leave Blank If You Didn't Want To Change">
                                     <span id="message3"></span>
                                 </div>
 
@@ -249,7 +364,6 @@
         //comming from Edit form
         elseif($do=="update-data")
         {
-            echo "<h3 class='text-center'>Update Data</h3>";
             echo "<div class='container'>";
 
             //validation(Client side) all form "update-data"
@@ -261,16 +375,20 @@
                 $Username =$_POST["username"];
                 $Fullname =$_POST["fullname"];
                 $Email =$_POST["email"];
-                $Password =$_POST["password"];
+                if(!empty($_POST["password"]))
+                {
+                    $Password =$_POST["password"];
+                    $hashPass=sha1($Password);
+                }
                 
                 //check Empty
-                if (empty($Username) || empty($Fullname) || empty($Email) || empty($Password)) 
+                if (empty($Username) || empty($Fullname) || empty($Email)) 
                 {$Errors_arr[]="<div class='alert alert-danger'>Please fill in all fields</div>";}
                 
                 //check length
-                if (strlen($Username)<6 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20) {
-                    if(strlen($Username)<6)
-                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be less than 6 letter</div>.";}
+                if (strlen($Username)<5 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20) {
+                    if(strlen($Username)<5)
+                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be less than 5 letter</div>.";}
                     elseif(strlen($Username)>20)
                     {$Errors_arr[]="<div class='alert alert-danger'>Username can't be more than 15 letter</div>.";}
                     elseif(strlen($Fullname)<10)
@@ -287,13 +405,17 @@
                     $row =$stmt1->fetch();
                     $count2 =$stmt1->rowCount();
                     
-                    //DB Password.
-                    $DBpassword = $row["Password"];
-                    if($count2 > 0 && $DBpassword == sha1($Password))
+                    if($count2 > 0 && isset($Password))
                     {
-                        $stmt2 =$con->prepare("update users set Username=? , Fullname=? , Email=? where ID = ?");
-                        $stmt2->execute(array($Username,$Fullname,$Email,$ID));
-                        echo "<h3 class='text-center'>Update Successfully </h3>";
+                            $stmt2 =$con->prepare("update users set Username=? , Fullname=? , Email=? , Password=? where ID = ?");
+                            $stmt2->execute(array($Username,$Fullname,$Email,$hashPass,$ID));
+                            echo "<h3 class='text-center'>Update Successfully </h3>";
+                    }
+                    elseif($count2 > 0 && !isset($Password))
+                    {
+                            $stmt2 =$con->prepare("update users set Username=? , Fullname=? , Email=? where ID = ?");
+                            $stmt2->execute(array($Username,$Fullname,$Email,$ID));
+                            echo "<h3 class='text-center'>Update Successfully </h3>";
                     }
                     else
                     {
