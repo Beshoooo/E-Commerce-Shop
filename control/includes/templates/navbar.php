@@ -29,7 +29,7 @@
             <?php echo $_SESSION["Username"];?>
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="edit.php?do=Edit&UserID=<?php echo $_SESSION["UserID"]?>">Edit Profile</a></li>
+            <li><a class="dropdown-item" href="edit.php?do=EditProfile&UserID=<?php echo $_SESSION["UserID"]?>">Edit Profile</a></li>
             <li><a class="dropdown-item" href="#">Setting</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="logout.php">Logout</a></li>

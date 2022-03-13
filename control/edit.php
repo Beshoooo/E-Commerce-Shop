@@ -12,6 +12,7 @@
         //if there is do ok get it else put it manage
         $do = isset($_GET["do"]) ? $_GET["do"] : "manage";        
 
+///////////////////////////////////////////////////////////////////////////////////////
         //check that we are comming from edit button else go to manage page.
         if($do == "manage")
         {
@@ -47,8 +48,8 @@
                                     echo"<td>".$row["Email"]."</td>";
                                     echo"<td>".$row["ID"]."</td>";
                                     echo"<td>";
-                                        echo"<a class='btn btn-success' href='edit.php?do=Edit-data&UserID=".$row["ID"]."'>Edit</a>";
-                                        echo"<a class='btn btn-danger'>Delete</a>";
+                                        echo"<a class='btn btn-success' href='edit.php?do=EditUserData&UserID=".$row["ID"]."'>Edit</a>";
+                                        echo"<a class='btn btn-danger confirmation' href='edit.php?do=deleteUser&UserID=".$row["ID"]."'>Delete</a>";
                                     echo"</td>";
                                 echo "</tr>";
                             }
@@ -66,7 +67,7 @@
         }
 
         //Edit data for any member
-        elseif($do=="Edit-data")
+        elseif($do=="EditUsersdata")
         {
             //check ther's ID and the ID is numeric and equal the ID in session
             if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"])) 
@@ -132,6 +133,32 @@
             else{echo "there's no ID like this.";}
         }
 
+        //Delete User Data
+        elseif($do=="deleteUser")
+        {
+            echo "<h3 class='text-center'>Delete Member</h3>";
+            echo "<div class='container'>";
+            $ID=isset($_GET["UserID"]) && is_numeric($_GET["UserID"]) ? intval($_GET["UserID"]) : 0;
+
+            $stmt =$con->prepare("select * from users where ID =? LIMIT 1");
+            $stmt->execute(array($ID));
+            $count = $stmt->rowCount();
+
+            if($count>0)
+            {
+                $stmt =$con->prepare("delete from users where ID = :id");
+                //bindParam just another way like array(":id"=>$ID)
+                $stmt->bindParam(":id",$ID);
+                $stmt->execute();
+
+                echo "<div class='alert alert-success'>".$stmt->rowCount()." Record Deleted .</div>";
+            }
+            else
+            {echo "<div class='alert alert-danger'> This ID is not Exist.</div>";}
+            
+
+        }
+///////////////////////////////////////////////////////////////////////////////////////
         //Add member page
         elseif($do=="Add")
         {
@@ -210,11 +237,11 @@
                 {$Errors_arr[]="<div class='alert alert-danger'>Please fill in all fields</div>";}
                 
                 //check length
-                if (strlen($Username)<6 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20
+                if (strlen($Username)<5 || strlen($Username)>15 || strlen($Fullname)<10 || strlen($Fullname)>20
                     || strlen($Password)<8) {
                     
                     if(strlen($Username)<6)
-                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be less than 6 letter</div>.";}
+                    {$Errors_arr[]="<div class='alert alert-danger'>Username can't be less than 5 letter</div>.";}
                     elseif(strlen($Username)>20)
                     {$Errors_arr[]="<div class='alert alert-danger'>Username can't be more than 15 letter</div>.";}
                     elseif(strlen($Fullname)<10)
@@ -228,16 +255,27 @@
                 //ther's no errors
                 if(empty($Errors_arr))
                 {  
-                    $stmt=$con->prepare("insert into users(Username ,Password ,Email ,Fullname)
-                                            values(:zuser ,:zpass ,:zemail ,:zfullname) ");
-                                            //can also use question mark like "values(?,?,?,?)"
+                    $stmtget=$con->prepare("select * from users where Username= ? limit 1");
+                    $stmtget->execute(array($Username));
+                    $row=$stmtget->fetch();
+                    $count=$stmtget->rowCount();
                     
-                    $stmt->execute(array(   'zuser'=>$Username,
-                                            'zpass'=>$hashed_pass,
-                                            'zemail'=>$Email,
-                                            'zfullname'=>$Fullname));
+                    //Avoid repeating Usernames 
+                    if($count>0)
+                    {echo "<div class='alert alert-danger'>Ther's another Username like this please Type anothe one. </div>";}
+                    else
+                    {
+                        $stmt=$con->prepare("insert into users(Username ,Password ,Email ,Fullname)
+                                                values(:zuser ,:zpass ,:zemail ,:zfullname) ");
+                                                //can also use question mark like "values(?,?,?,?)"
+                        
+                        $stmt->execute(array(   'zuser'=>$Username,
+                                                'zpass'=>$hashed_pass,
+                                                'zemail'=>$Email,
+                                                'zfullname'=>$Fullname));
 
-                    echo "<div class='alert alert-success'>".$stmt->rowCount()." Record Inserted .</div>";
+                        echo "<div class='alert alert-success'>".$stmt->rowCount()." Record Inserted .</div>";
+                    }
                 }
                 //if ther's an error then print it.
                 else
@@ -254,14 +292,12 @@
             echo "</div>";
 
         }
-
+///////////////////////////////////////////////////////////////////////////////////////
         //Edit User profile
         elseif($do=="Edit")
         {
-            //check ther's ID and the ID is numeric and equal the ID in session
-            if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"])) {
-                
-                $UserID=$_GET["UserID"];
+                //check there's ID and the ID is numeric then get integer value of it 
+                $UserID=isset($_GET["UserID"])&& is_numeric($_GET["UserID"]) ?intval($_GET["UserID"]) : 0 ;
                 //get all data of the user by ID
                 $stmt = $con->prepare("select * from users where ID = ? LIMIT 1");
                 $stmt->execute(array($UserID));
@@ -357,8 +393,7 @@
                 
                 }//for validate 
                 else{echo "there's no data for this ID member in our database.";}
-            }//for validate
-            else{echo "there's no ID like this.";}
+            if($UserID == 0){echo "there's no ID like this.";}
         }
 
         //comming from Edit form
@@ -496,7 +531,7 @@
             echo "</div>";
         }
 
-        
+///////////////////////////////////////////////////////////////////////////////////////
 
         else
         {

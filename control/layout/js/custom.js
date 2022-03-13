@@ -15,6 +15,11 @@ $(function(){
 });
 
 
+//Confirmation message on delete button
+$(".confirmation").click(function(){
+    return confirm("Are you sure ?");
+});
+
 //validation(Client side) for not submit till all is ok.
 //Validate  Edit_Profile Form
 function EditProfile()
