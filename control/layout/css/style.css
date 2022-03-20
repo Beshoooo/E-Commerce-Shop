@@ -10,8 +10,8 @@ body
 span{color:red;}
 h5{color: red;text-align: center;}
 h3{color: #333333bf;margin: 90px 0px 40px 0px;}
-/*Adding astrisk*/
-.addAstrisk:after {
+.addAstrisk:after /*Adding astrisk*/
+{
     content:"*";
     color:red;
 }
@@ -73,6 +73,10 @@ link:focus, .navbar-dark .navbar-nav .nav-link:hover,
 /*end edit profile page*/
 
 /*start edit manage page*/
+.main-table
+{
+    vertical-align: middle !important;
+    box-shadow: 0px 2px 11px #aaa;}
 .main-table thead
 {
     border-color: #333;
@@ -80,5 +84,8 @@ link:focus, .navbar-dark .navbar-nav .nav-link:hover,
     color: #fff;
 }
 .main-table a {margin-right: 5px;}
+.main-table .btn{padding: 3px 7px;}
 
 /*end edit manage page*/
+
+

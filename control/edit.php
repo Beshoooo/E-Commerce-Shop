@@ -13,7 +13,7 @@
         $do = isset($_GET["do"]) ? $_GET["do"] : "manage";        
 
 ///////////////////////////////////////////////////////////////////////////////////////
-        //check that we are comming from edit button else go to manage page.
+        //check that we are comming from edit button else go to manage members page.
         if($do == "manage")
         {
         //Here i'm in manage page and have more than option. 
@@ -27,7 +27,7 @@
             <h3 class="text-center">Manage Members</h3>
             <div class="container">
                 <div class="table-responsive">
-                    <table class="main-table text-center table table-bordered">
+                    <table class="main-table text-center table table-bordered table-responsive">
                         <thead>
                             <td>#ID</td>
                             <td>Username</td>
@@ -48,8 +48,8 @@
                                     echo"<td>".$row["Email"]."</td>";
                                     echo"<td>".$row["ID"]."</td>";
                                     echo"<td>";
-                                        echo"<a class='btn btn-success' href='edit.php?do=EditUserData&UserID=".$row["ID"]."'>Edit</a>";
-                                        echo"<a class='btn btn-danger confirmation' href='edit.php?do=deleteUser&UserID=".$row["ID"]."'>Delete</a>";
+                                        echo"<a class='btn btn-success' href='edit.php?do=EditUserData&UserID=".$row["ID"]."'><i class='fa fa-edit'></i> Edit</a>";
+                                        echo"<a class='btn btn-danger confirmation' href='edit.php?do=deleteUser&UserID=".$row["ID"]."'><i class='fas fa-times'></i> Delete</a>";
                                     echo"</td>";
                                 echo "</tr>";
                             }
@@ -59,15 +59,15 @@
                         
                     </table>
 
-                    <a class="btn btn-primary" href='edit.php?do=Add'><i class="fa fa-plus"></i> add new member</a>
+                    <a class="btn btn-primary" href='edit.php?do=Add'><i class="fa fa-plus"></i> New member</a>
                 </div>
             </div>
             
             <?php
         }
 
-        //Edit data for any member
-        elseif($do=="EditUsersdata")
+        //Edit data for any member [front]
+        elseif($do=="EditUserData")
         {
             //check ther's ID and the ID is numeric and equal the ID in session
             if (isset($_GET["UserID"]) && is_numeric($_GET["UserID"])) 
@@ -133,7 +133,7 @@
             else{echo "there's no ID like this.";}
         }
 
-        //Delete User Data
+        //Delete User Data [back of manage]
         elseif($do=="deleteUser")
         {
             echo "<h3 class='text-center'>Delete Member</h3>";
@@ -150,16 +150,19 @@
                 //bindParam just another way like array(":id"=>$ID)
                 $stmt->bindParam(":id",$ID);
                 $stmt->execute();
-
+                
                 echo "<div class='alert alert-success'>".$stmt->rowCount()." Record Deleted .</div>";
             }
             else
-            {echo "<div class='alert alert-danger'> This ID is not Exist.</div>";}
+            {
+                $error= "<div class='alert alert-danger'> This ID is not Exist.</div>";
+                redirectPage($error,"edit.php",5);
+            }
             
 
         }
 ///////////////////////////////////////////////////////////////////////////////////////
-        //Add member page
+        //Add member page [front of Insert]
         elseif($do=="Add")
         {
         ?>
@@ -213,11 +216,10 @@
                 </div>
             </form>
         </div>
-
             
         <?php
         }
-        //comming from Add form
+        //comming from Add form [back of Add]
         elseif ($do=="Insert") 
         {
             echo "<h3 class='text-center'>Update Data</h3>";
@@ -255,11 +257,10 @@
                 //ther's no errors
                 if(empty($Errors_arr))
                 {  
-                    $stmtget=$con->prepare("select * from users where Username= ? limit 1");
-                    $stmtget->execute(array($Username));
-                    $row=$stmtget->fetch();
-                    $count=$stmtget->rowCount();
-                    
+                    $item ="Username";//column name
+                    $table= "users";//table name
+                    $count = checkItems("Username",$table,$Username);
+
                     //Avoid repeating Usernames 
                     if($count>0)
                     {echo "<div class='alert alert-danger'>Ther's another Username like this please Type anothe one. </div>";}
@@ -283,18 +284,23 @@
                     foreach ($Errors_arr as $error) {
                         echo $error;
                     }
+                    redirectPage("","edit.php?do=Add",5,false);                    
+
                 }
                 
                 
             }
-            else{echo "sorry you can't access this page directly :D.";}
+            else{
+                $error="Sorry you can't access this page directly :D.";
+                redirectPage($error,3);
+                }
             
             echo "</div>";
 
         }
 ///////////////////////////////////////////////////////////////////////////////////////
-        //Edit User profile
-        elseif($do=="Edit")
+        //Edit User My profile [front]
+        elseif($do=="EditProfile")
         {
                 //check there's ID and the ID is numeric then get integer value of it 
                 $UserID=isset($_GET["UserID"])&& is_numeric($_GET["UserID"]) ?intval($_GET["UserID"]) : 0 ;
@@ -396,7 +402,7 @@
             if($UserID == 0){echo "there's no ID like this.";}
         }
 
-        //comming from Edit form
+        //comming from Edit form [back of EditProfile & EditUserData]
         elseif($do=="update-data")
         {
             echo "<div class='container'>";
@@ -464,6 +470,9 @@
                     foreach ($Errors_arr as $error) {
                         echo $error;
                     }
+                    $url="edit.php?do=EditUserData&UserID=".$ID;
+                    redirectPage("",$url,5,false);
+
                 }
                 
                 
@@ -473,7 +482,7 @@
             echo "</div>";
         }
 
-        //comming from Edit Password form
+        //comming from Edit Password form [back of EditProfile]
         elseif($do=="update-pass")
         {
             echo "<h3 class='text-center'>Update Password</h3>";
@@ -513,11 +522,15 @@
                         $stmt2=$con->prepare("update users set Password = ? where ID = ? ");
                         $stmt2->execute(array($hash_new,$ID));
                         echo "<h3 class='text-center'>Your Password Updated Successfully </h3>";
-                        
+                        //redirect
+                        $url="edit.php?do=EditProfile&UserID=".$ID;
+                        redirectPage("",$url,5,false);
                     }
                     else
                     {
-                        echo "<h3 class='text-center'> Wrong password plesae renter the right password.</h3>";
+                        $url="edit.php?do=EditProfile&UserID=".$ID;
+                        $error= "Wrong password plesae renter the right password.";
+                        redirectPage($error,$url,5);
                     }
                 }
                 
@@ -526,6 +539,8 @@
                     foreach ($Errors_arr as $error) {
                         echo $error ;
                     }
+                    $url="edit.php?do=EditProfile&UserID=".$ID;
+                    redirectPage("",$url,5,false);
                 }
             }
             echo "</div>";
@@ -535,15 +550,16 @@
 
         else
         {
-            echo "There is no page here.";
+            $error="There is no page here.";
+            redirectPage($error,3);
         }
 
         include $tpl ."footer.php";
     }
     else
     {
-        echo "you are not athorized to be here .";
-        header("Location: index.php");
+        $error="you are not athorized to be here.";
+        redirectPage($error,3);
         exit();
     }
 
